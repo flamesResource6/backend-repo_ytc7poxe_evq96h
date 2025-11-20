@@ -11,11 +11,10 @@ Model name is converted to lowercase for the collection name:
 - BlogPost -> "blogs" collection
 """
 
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel, Field, EmailStr
+from typing import Optional, Literal
 
-# Example schemas (replace with your own):
-
+# Example schemas (you can keep or remove if not needed)
 class User(BaseModel):
     """
     Users collection schema
@@ -38,11 +37,26 @@ class Product(BaseModel):
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
 
-# Add your own schemas here:
-# --------------------------------------------------
-
-# Note: The Flames database viewer will automatically:
-# 1. Read these schemas from GET /schema endpoint
-# 2. Use them for document validation when creating/editing
-# 3. Handle all database operations (CRUD) directly
-# 4. You don't need to create any database endpoints!
+# Electrician business inquiry schema
+class Inquiry(BaseModel):
+    """
+    Customer inquiries and quote requests
+    Collection name: "inquiry"
+    """
+    name: str = Field(..., description="Customer full name")
+    email: Optional[EmailStr] = Field(None, description="Customer email address")
+    phone: Optional[str] = Field(None, description="Customer phone number")
+    service: Literal[
+        "General Maintenance",
+        "Rewires",
+        "Smoke Alarms",
+        "Security & CCTV",
+        "EV Chargers",
+        "Lighting",
+        "Other",
+    ] = Field(..., description="Requested service type")
+    message: Optional[str] = Field(None, description="Additional details from customer")
+    source: Optional[str] = Field(None, description="Lead source, e.g., website form")
+    status: Literal["new", "contacted", "scheduled", "completed", "archived"] = Field(
+        "new", description="Inquiry status"
+    )
